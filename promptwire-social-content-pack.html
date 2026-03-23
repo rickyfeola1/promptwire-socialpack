@@ -930,15 +930,19 @@ async function subscribe(source) {
     btn.style.opacity = '0.7';
     btn.disabled = true;
 
+    let eventId = null;
     try {
-        await fetch(API_URL, {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, automation_id: AUTOMATION_ID })
         });
+        const data = await response.json().catch(() => ({}));
+        if (data.event_id) eventId = data.event_id;
     } catch(e) { console.error(e); }
 
-    window.top.location.href = 'https://www.promptwireai.com/recommendations';
+    const eid = eventId ? '?eid=' + eventId + '&src=social_pack' : '?src=social_pack';
+    window.top.location.href = 'https://www.promptwireai.com/recommendations' + eid;
 }
 
 document.getElementById('heroEmail').addEventListener('keypress', e => { if (e.key === 'Enter') subscribe('hero'); });
